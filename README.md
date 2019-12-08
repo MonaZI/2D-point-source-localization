@@ -1,4 +1,4 @@
 # 2D-point-source-localization
-## Abstract
+## Geometric Invariants for Sparse Unknown View Tomography
 In this paper, we study a 2D tomography problem for point source models with random unknown view angles. 
 Rather than recovering the projection angles, we reconstruct the model through a set of rotation-invariant features that are estimated from the projection data. For a point source model, we show that these features reveal geometric information about the model such as the radial and pairwise distances. This establishes a connection between unknown view tomography and unassigned distance geometry problem (uDGP). We propose new methods to extract the distances and approximate the pairwise distance distribution of the underlying points. We then use the recovered distribution to estimate the locations of the points through constrained non-convex optimization. Our simulation results verify the robustness of our point source reconstruction pipeline to noise and error in the estimation of the features.
