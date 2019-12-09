@@ -122,7 +122,6 @@ class PointGen2D:
         M = 2 * self.L # length of the 1D projection line
         proj = np.zeros((M+1, self.numProj))
         for k in range(self.numProj):
-            print(k)
             for n in range(self.numPoint):
                 if rows[n, k] < halfWidth:
                     proj[0:int(rows[n, k]+halfWidth), k] += gaussSignal[int(halfWidth-rows[n, k] + 1):]

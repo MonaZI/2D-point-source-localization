@@ -1,4 +1,5 @@
 classes/*.m~
 utils/*.m~
 *.m~
+*.png
 

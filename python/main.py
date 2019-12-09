@@ -20,6 +20,7 @@ def main(args):
     uMax = 1.1 * np.max(points.radialDist)
     _, muSampleDist, u = feature.mean_sample(uMax)
     plot_feature_baseline(muSampleDist, u, points.radialDist, 'Mean')
+    import pdb; pdb.set_trace()
     # auto-correlation feature
     uMax = 1.1 * np.max(points.pairDist)
     _, distCorr, u = feature.corr_sample(nVar, uMax)

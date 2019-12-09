@@ -44,7 +44,6 @@ class FeatureGen2D:
         L = (self.proj.shape[0]-1)//2
         fftDisProj = np.fft.fft(np.fft.ifftshift(self.proj, 0), axis=0)
         absFFT = np.mean(np.absolute(fftDisProj)**2, 1)
-        import pdb; pdb.set_trace()
         corrEst = absFFT[0:int(self.fcutoff)]
         corrEst = np.real(corrEst-self.numPoint)/2
         # debiasing C for the noisy case
