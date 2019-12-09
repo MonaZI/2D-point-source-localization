@@ -13,8 +13,6 @@ for k = 1:length(m)
    prony_vec(m(k)-K+2) = -b(m(k)+2);    
 end
 
-
-
 % generate the extended prony matrix
 prony_mat1 = zeros(M-K,K);
 prony_vec1 = zeros(M-K,1);
