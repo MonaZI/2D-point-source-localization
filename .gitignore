@@ -4,4 +4,5 @@ utils/*.m~
 *.png
 python/__pycache__/
 python/*.png
-
+.idea/
+.DS_Store
