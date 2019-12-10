@@ -26,8 +26,8 @@ class PointGen2D:
             locs = self.gen_point_source()
         else:
             locs = self.gen_point_source_constrained(args.minDist, args.distType)
-        self.X = locs[:, 0] - np.mean(locs[:, 0])
-        self.Y = locs[:, 1] - np.mean(locs[:, 1])
+        self.X = locs[:, 0] # - np.mean(locs[:, 0])
+        self.Y = locs[:, 1] # - np.mean(locs[:, 1])
         self.theta = np.linspace(0, 2 * math.pi, num=args.numProj)
         self.radialDist = self.radial_distance()
         self.pairDist = self.pair_distance()
@@ -48,35 +48,37 @@ class PointGen2D:
         :param distType: the distance for which we have the minimum distance
         :return: coord, the coordinates of the points
         """
-        coord = []
+        coord = np.random.uniform(size=(2, 1))
         trial = 1
-        while(coord.shape[0] < self.numPoint):
+        while(coord.shape[1] < self.numPoint):
             iter = 1
             coord = np.random.uniform(size=(2, 1))
-            while (iter < 1000) and (len(coord) < self.numPoint):
+            while (iter < 1000) and (coord.shape[1] < self.numPoint):
                 newPoint = np.random.uniform(size=(2, 1)) - 0.5
                 if distType=='radial':
-                    radialNew = np.linalg.norm(newPoint)
-                    radialDist = np.sqrt(np.sum(coord**2, 1))
+                    radialNew = np.sqrt(np.sum(newPoint**2))
+                    radialDist = np.sqrt(np.sum(coord**2, 0))
                     diffNewDist = np.absolute(radialDist - radialNew)
                 else:
-                    coordTmp = np.concatenate(coord, newPoint, axis=1)
-                    Dx = coordTmp[:, 1] - np.transpose(coordTmp[:, 1])
-                    Dy = coordTmp[:, 2] - np.transpose(coordTmp[:, 2])
+                    coordTmp = np.concatenate((coord, newPoint), axis=1)
+                    coordTmp = np.transpose(coordTmp)
+                    # import pdb; pdb.set_trace()
+                    Dx = np.expand_dims(coordTmp[:, 0], 1) - np.expand_dims(coordTmp[:, 0], 0)
+                    Dy = np.expand_dims(coordTmp[:, 1], 1) - np.expand_dims(coordTmp[:, 1], 0)
                     D = np.sqrt(Dx**2 + Dy**2)
                     D = np.sort(np.unique(D.reshape(-1, 1)))
                     D = D[1:]
                     diffNewDist = []
                     for k1 in range(len(D)):
-                        for k2 in range(len(D)):
-                            diffNewDist.append(abs(D_oracle(k1) - D_oracle(k2)))
+                        for k2 in range(k1+1, len(D)):
+                            diffNewDist.append(np.absolute(D[k1] - D[k2]))
                     diffNewDist = np.array(diffNewDist)
-
-                if (not np.where(diffNewDist < minDist)):
-                    coord = np.concatenate(coord, newPoint, axis=1)
-
+                # import pdb; pdb.set_trace()
+                if (not any((diffNewDist < minDist))):
+                    coord = np.concatenate((coord, newPoint), axis=1)
                 iter += 1
             trial +=1
+        coord = np.transpose(coord)
         return coord
 
     def radial_distance(self):
@@ -92,7 +94,6 @@ class PointGen2D:
         Computes the pairwise distance between the given point sources
         :return: d, the sorted pairwise distances
         """
-        # import pdb; pdb.set_trace()
         xx = np.expand_dims(self.X, 1)
         yy = np.expand_dims(self.Y, 1)
         Dx = xx - np.transpose(xx)
@@ -114,7 +115,7 @@ class PointGen2D:
         rX = np.dot(np.expand_dims(self.X, 1), np.sin(np.expand_dims(self.theta, 0))) - \
              np.dot(np.expand_dims(self.Y, 1), np.cos(np.expand_dims(self.theta, 0)))
         rX = np.round(rX / pixelSize)
-        rows = rX + self.L + 1
+        rows = rX + self.L
         gaussWidth = 6 * np.floor(sigma / pixelSize) + 1
         halfWidth = int(3 * np.floor(sigma / pixelSize))
         gridGauss = np.arange(-3 * np.floor(sigma/pixelSize), 3 * np.floor(sigma/pixelSize) + 1) * pixelSize
@@ -140,9 +141,8 @@ class PointGen2D:
             nVar = (1/snr) * sig_var  # the variance of the noise
             proj = proj + np.sqrt(nVar) * np.random.normal(size=proj.shape)
 
-        #TODO: you should perform zero-padding here if u want
+        #zero-padding the projection lines
         proj = np.concatenate((np.zeros((self.L, self.numProj)), proj, np.zeros((self.L, self.numProj))), axis = 0)
-        # disc_projs = [ zeros(obj.L, size(disc_projs, 2)); disc_projs; zeros(obj.L, size(disc_projs, 2))];
 
         return proj, nVar
 
@@ -158,7 +158,6 @@ class PointGen2D:
         rX = np.round(rX / pixelSize)
         locs = (rX + self.L ).astype(int)
         cols = np.tile(np.arange(0, self.numProj, dtype=int), (self.numPoint,1))
-        import pdb; pdb.set_trace()
         proj = np.zeros((2*self.L+1, self.numProj))
         proj[locs.reshape(-1, 1), cols.reshape(-1,1)] = 1.
         sig_var = np.var(proj.reshape(-1, 1))
@@ -166,4 +165,6 @@ class PointGen2D:
         if snr!='clean':
             nVar = (1/snr) * sig_var  # the variance of the noise
             proj = proj + np.sqrt(nVar) * np.random.normal(size=proj.shape)
+
+        proj = np.concatenate((np.zeros((self.L, self.numProj)), proj, np.zeros((self.L, self.numProj))), axis = 0)
         return proj, nVar

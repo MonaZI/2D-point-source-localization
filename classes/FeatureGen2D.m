@@ -79,7 +79,7 @@ classdef FeatureGen2D
                     autocorr = fftshift(autocorr);
                     % Compute samples direct
                     k1=(-floor(l/2):floor(l/2));
-                    tmp = x*k1;
+                    tmp = obj.nodes*k1;
                     tmp = exp(-2*pi*1i*tmp/l);
                     C_est = tmp*autocorr;
             end
@@ -118,7 +118,7 @@ classdef FeatureGen2D
         
         function [dist, u] = compute_distribution(obj, f, maxLim)
             % Computes the distributions from the features
-            u = linspace(0, maxLim*1.1, 1000).'; %b1 is on the interval [0, R] for mean
+            u = linspace(0, maxLim*1.1, 3000).'; %b1 is on the interval [0, R] for mean
             t = 2 * pi * obj.fDisc / (obj.pixelSize * size(obj.proj, 1));
             mu = real(Bessel_num_int(f, u, t, obj.weights));
             dist = mu.^2;

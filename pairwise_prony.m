@@ -1,12 +1,13 @@
 % the prony method applied to the radial distances, subsection 2.2 in the
-% paper
+% paper. Evaluating the method for different settings.
+RunMe;
 clear all; close all; clc;
 
 % parameters of the experiment
-k_vec = [5];            %number of points
-L_vec = [100, 500, 1000, 1500];
+k_vec = [5];            % number of points
+L_vec = [1000, 1500];   % 2L+1: the number of discretizations of the projection lines
 num_iter = 100;         % number of random realizations of point source models
-numProj = 10^4;         %number of samples
+numProj = 10^4;         % number of samples
 R = 1;                  % the support of the signal
 minDist = 0.1;          % the minimum distance
 distType = 'pair';      % the distance for which we apply the constraint on the point-source model
@@ -59,9 +60,7 @@ for k_ind = 1:length(k_vec)
                 
                 % extract the geometry information from the roots
                 tmp = angle(r_pair);
-                % changing all the angles to be between 0-2\pi
                 % choosing the points that are in the first half of the circle
-                tmp(find(tmp<0)) = tmp(find(tmp<0)) + 2 * pi;
                 ind1 = (tmp<=pi);
                 ind2 = (tmp>=0);
                 index = ind1 & ind2;
@@ -76,8 +75,8 @@ for k_ind = 1:length(k_vec)
                 
                 error_r_MSE(k_ind,L_ind,snr_ind,iter) = norm(sort(r_rec)-sort(D),'fro');
                 error_r_rel(k_ind,L_ind,snr_ind,iter) = norm(sort(r_rec)-sort(D),'fro')/norm(points.radialDist,'fro');
-                fprintf('K = %d, L = %d, snr_ind = %d, iter_sig = %d, error_MSE(iter) = %f \n', ...
-                    numPoint, L_vec(L_ind),snr_ind,iter,error_r_MSE(k_ind,L_ind,snr_ind,iter));
+                fprintf('K = %d, L = %d, snr = %d, iter_sig = %d, error_MSE = %f \n', ...
+                    numPoint, L_vec(L_ind), snr_vec(snr_ind), iter,error_r_MSE(k_ind,L_ind,snr_ind,iter));
             end
         end
     end

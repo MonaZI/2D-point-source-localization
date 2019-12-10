@@ -1,10 +1,11 @@
 % the prony method applied to the radial distances, subsection 2.2 in the
-% paper
+% paper. Evaluating the method for different settings.
+RunMe;
 clear all; close all; clc;
 
 % parameters of the experiment
 k_vec = [5];            %number of points
-L_vec = [100, 500, 1000, 1500];
+L_vec = [1000, 1500];   % 2L+1: the number of discretizations of the projection lines
 num_iter = 100;         % number of random realizations of point source models
 numProj = 10^4;         %number of samples
 R = 1;                  % the support of the signal
@@ -39,7 +40,7 @@ for k_ind = 1:length(k_vec)
                 fcutoff = round(2*L); %can modify this cutoff as long as its below 2L
 
                 points.L = L;
-                pixelSize = 2.2*max(points.radialDist)/(2*points.L+1);
+                pixelSize = 3*max(points.radialDist)/(2*points.L+1);
                 [disc_projs, n_var] = points.proj_1d_point(pixelSize, snr);
                 
                 % generate the features
@@ -51,7 +52,7 @@ for k_ind = 1:length(k_vec)
                 r_interval = ind;
                 b_pairwise = sampleMean(ind+1);
                 
-                M = 2 * L + 1;
+                M = size(disc_projs, 1);
                 [prony_mat, prony_vec] = gen_prony_mat(b_pairwise .* sqrt(r_interval), numPoint * 2);
                 c = pinv(prony_mat)*prony_vec;
                 c = [1;c];
@@ -59,9 +60,7 @@ for k_ind = 1:length(k_vec)
                 
                 % extract the geometry information from the roots
                 tmp = angle(r_radial);
-                % changing all the angles to be between 0-2\pi
                 % choosing the points that are in the first half of the circle
-                tmp(find(tmp<0)) = tmp(find(tmp<0)) + 2 * pi;
                 ind1 = (tmp<=pi);
                 ind2 = (tmp>=0);
                 index = ind1 & ind2;
@@ -74,8 +73,8 @@ for k_ind = 1:length(k_vec)
                 
                 error_r_MSE(k_ind,L_ind,snr_ind,iter) = norm(sort(r_rec)-sort(points.radialDist),'fro');
                 error_r_rel(k_ind,L_ind,snr_ind,iter) = norm(sort(r_rec)-sort(points.radialDist),'fro')/norm(points.radialDist,'fro');
-                fprintf('K = %d, L = %d, snr_ind = %d, iter_sig = %d, error_MSE(iter) = %f \n', ...
-                    numPoint, L_vec(L_ind),snr_ind,iter,error_r_MSE(k_ind,L_ind,snr_ind,iter));
+                fprintf('K = %d, L = %d, snr = %d, iter_sig = %d, error_MSE = %f \n', ...
+                    numPoint, L_vec(L_ind), snr_vec(snr_ind), iter, error_r_MSE(k_ind,L_ind,snr_ind,iter));
             end
         end
     end

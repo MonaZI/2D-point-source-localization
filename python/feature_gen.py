@@ -28,7 +28,7 @@ class FeatureGen2D:
         :param maxLim: the maximum value for which the mean sample is computed
         :return: muEst, muDist, u: the estimation of the feature, the radial distance distribution and the sampling points of the features
         """
-        muEst = np.mean(self.proj, axis=1)
+        muEst = np.mean(self.proj, 1)
         muEst = np.fft.fft(np.fft.ifftshift(muEst))
         muEst = np.real(muEst[0:int(self.fcutoff)])
         [muDist, u] = self.compute_distribution(muEst, maxLim)
@@ -42,7 +42,7 @@ class FeatureGen2D:
         :return: corrEst, corrDist, u: the estimation of the feature, the pairwise distance distribution and the sampling points of the feature
         """
         L = (self.proj.shape[0]-1)//2
-        fftDisProj = np.fft.fft(np.fft.ifftshift(self.proj, 0), axis=0)
+        fftDisProj = np.fft.fft(np.fft.ifftshift(self.proj, axes=(0,)), axis=0)
         absFFT = np.mean(np.absolute(fftDisProj)**2, 1)
         corrEst = absFFT[0:int(self.fcutoff)]
         corrEst = np.real(corrEst-self.numPoint)/2
@@ -52,7 +52,7 @@ class FeatureGen2D:
         return corrEst, corrDist, u
 
     def compute_distribution(self, f, maxLim):
-        u = np.linspace(0, 1.1 * maxLim, 2000)
+        u = np.linspace(0, 1.1 * maxLim, 3000)
         t = 2 * math.pi * self.fDisc / (self.pixelSize * self.proj.shape[0])
         tmp = np.real(bessel_num_int(f, u, t, self.weights))
         # np.clip(tmp, 0., None, out=tmp)
@@ -70,7 +70,6 @@ def bessel_num_int(f, u, t, w):
     :param w: the weights used in approximating the integration
     :return: res, the final result
     """
-    # import pdb; pdb.set_trace()
     jb = jv(0, np.expand_dims(u, 1)*np.expand_dims(t, 0))
     res = np.expand_dims(u, 1) * (np.dot(jb, np.expand_dims((t*w)*f, 1)))
     return res

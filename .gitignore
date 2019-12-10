@@ -2,4 +2,6 @@ classes/*.m~
 utils/*.m~
 *.m~
 *.png
+python/__pycache__/
+python/*.png
 

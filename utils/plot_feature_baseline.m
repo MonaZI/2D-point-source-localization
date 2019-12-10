@@ -9,7 +9,7 @@ figure;
 plot(r, f, 'LineWidth', 3)
 hold on;
 plot(locs, max(f) * ones(size(locs)), 'x', 'LineWidth', 3, 'MarkerSize', 8)
-legend('Estimated', 'Groundtruth', 'Location', 'Best', 'FontSize', 14)
+legend('Estimated', ['Groundtruth distances'], 'Location', 'Best', 'FontSize', 14)
 xlabel('$$u$$', 'FontSize', 14, 'interpreter', 'latex')
 if strcmp(feature, 'Mean')
     ylabel('$$f_{\mu}(u)$$', 'interpreter', 'latex', 'FontSize', 14)

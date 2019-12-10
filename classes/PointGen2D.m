@@ -28,8 +28,8 @@ classdef PointGen2D
             else
                 locs = obj.gen_point_source_constrained(minDist, distType);
             end
-            obj.X = locs(:, 1) - mean(locs(:, 1));
-            obj.Y = locs(:, 2) - mean(locs(:, 2));
+            obj.X = locs(:, 1); % - mean(locs(:, 1));
+            obj.Y = locs(:, 2); % - mean(locs(:, 2));
             % uniformly distributed angles between [0, 2 pi]
             %             obj.theta = 2 * pi * rand(numProj, 1);
             obj.theta = linspace(0, 2*pi, numProj).';
