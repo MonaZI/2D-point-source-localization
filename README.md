@@ -12,4 +12,4 @@ Link to paper: https://arxiv.org/pdf/1811.09940.pdf
 ## Distance retrieval from unknown view tomography of 2D point sources
 In this paper, we study a 2D tomography problem with random and unknown projection angles for a point source model. Specifically, we target recovering geometry information, i.e. the radial and pairwise distances of the underlying point source model. For this purpose, we introduce a set of rotation-invariant features that are estimated from the projection data. We further show these features are functions of the radial and pairwise distances of the point source model. By extracting the distances from the features, we gain insight into the geometry of the unknown point source model. This geometry information can be used later on to reconstruct the point source model. The simulation results verify the robustness of our method in presence of noise and errors in the estimation of the features.
 
-Link to paper: 
+Link to paper: https://bit.ly/2YqKCRb
