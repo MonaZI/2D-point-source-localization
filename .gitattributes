@@ -1,1 +1,2 @@
-*.* linguist-language=Python-Matlab
+*.* linguist-language=Python
+*.* linguist-language=Matlab
