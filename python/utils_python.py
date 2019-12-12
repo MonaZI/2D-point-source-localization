@@ -77,3 +77,48 @@ def plot_roots(est_harmonics, dists, pixelSize, M, mode='radial'):
     plt.scatter(np.real(est_harmonics / np.absolute(est_harmonics)),np.imag(est_harmonics / np.absolute(est_harmonics)),marker='x', s=60, label='est.')
     plt.legend()
     plt.title('The locations of the gt and estimated harmonics (for ' + mode +' distances) on the unit circle')
+    plt.savefig('prony_' + mode + '.png')
+
+
+def prony(f, gtDist, start_r, M, numPoint, pixelSize, mode='radial'):
+    """
+    Applies the prony method to find the radial/pairwise distances incloved in feature f
+    :param f: the feature, mean/auto-correlation feature
+    :param gtDist: the ground truth distances, used for the purpose of comparison
+    :param start_r: the starting index of the feature used for prony method
+    :param numPoint: the number of points
+    :param pixelSize: pixel size
+    :param mode: radial or pairwise
+    :return: recDist, recRoot, error,
+     the recovered distances and recovered roots (corresponding to the polynomial constructed in Prony method),
+     the error in estimation of the distances compared to the groundtruth
+    """
+    M_prony = numPoint * 10
+    r_interval = np.arange(start_r-1, start_r+M_prony)
+    b_pairwise = f[r_interval]
+
+    if mode=='radial':
+        numHarmonics = 2 * numPoint
+    elif mode=='pairwise':
+        numHarmonics = numPoint * (numPoint - 1)
+    prony_mat, prony_vec = gen_prony_mat(b_pairwise*np.sqrt(r_interval), numHarmonics)
+    c = np.dot(np.linalg.pinv(prony_mat), prony_vec)
+    c = np.concatenate((np.ones((1, 1)), c), axis=0)
+    recRoot = np.roots(c.squeeze())
+
+    # extract the geometry information from the roots
+    tmp = np.angle(recRoot)
+    # choosing the points that are in the first half of the circle
+    ind1 = (tmp<=pi)
+    ind2 = (tmp>=0)
+    index = ind1 & ind2
+
+    # choosing the numHarmonics/2 roots that are closest to the unit circle
+    recRoot = recRoot[index]
+    I = np.argsort(np.absolute(1-np.absolute(recRoot)))
+    recRoot = recRoot[I[0:numHarmonics//2]]
+    recDist = (np.angle(recRoot) * pixelSize * M) / (2 * pi)
+
+    # error between the recovered and true distances distances
+    error = np.linalg.norm(np.sort(recDist)-np.sort(gtDist))
+    return recDist, recRoot, error

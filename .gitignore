@@ -6,3 +6,4 @@ python/__pycache__/
 python/*.png
 .idea/
 .DS_Store
+python/.ipynb_checkpoints/
