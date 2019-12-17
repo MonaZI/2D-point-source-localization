@@ -7,3 +7,4 @@ python/*.png
 .idea/
 .DS_Store
 python/.ipynb_checkpoints/
+jupyter_note/

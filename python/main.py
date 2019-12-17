@@ -53,7 +53,7 @@ def arg_parse():
     parser.add_argument('-L', type=int, default=3000, help='the number of discretizations of the projection lines')
     parser.add_argument('-R', type=float, default=1., help='the maximum distance of the points from the center')
     parser.add_argument('-sigmaG', type=float, default=0.005, help='the std of the Gaussians used to generate the point sources')
-    parser.add_argument('-snr', type=float, default=1000, help='the signal to noise ratio')
+    parser.add_argument('-snr', type=float, default=100, help='the signal to noise ratio')
     parser.add_argument('-seed', type=int, default=1, help='the random seed')
     args = parser.parse_args()
     return args
