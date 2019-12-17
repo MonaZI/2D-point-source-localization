@@ -22,5 +22,3 @@ Link to paper: https://bit.ly/2YqKCRb
 - Run radial_prony.m and pairwise_prony.m for extracting radial and pairwise distances
 
 - Python implementations of the same functionalities are provided in ./python directory
-
-- A jupyter notebook with a demo example is provided in ./python/cryoPDF.ipynb
